@@ -1,0 +1,5 @@
+---
+# defaults file for ansible-role-openeo-k8s
+
+openeo_cert_manager_issuer: letsencrypt-staging-issuer
+openeo_dns_name: openeoendpoint.com

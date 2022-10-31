@@ -1,0 +1,10 @@
+---
+# tasks file for ansible-role-openeo-k8s
+
+- name: Install dependencies
+  pip: name=kubernetes state=present
+
+- name: Install kubernetes collection
+  local_action: command ansible-galaxy collection install kubernetes.core
+
+- include_tasks: install.yaml
