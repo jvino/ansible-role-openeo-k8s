@@ -5,6 +5,6 @@
   pip: name=kubernetes state=present
 
 - name: Install kubernetes collection
-  local_action: command ansible-galaxy collection install kubernetes.core
+  local_action: command ansible-galaxy collection install kubernetes.core -p /usr/share/ansible/collections
 
 - include_tasks: install.yaml
