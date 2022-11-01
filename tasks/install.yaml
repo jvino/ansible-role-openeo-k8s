@@ -2,15 +2,15 @@
 
 - name: Create spark-jobs namespace
   kubernetes.core.k8s:
-    kubeconfig: /etc/kubernetes/admin.conf      
     name: spark-jobs
     api_version: v1
     kind: Namespace
     state: present
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Deploy latest version of spark-operator chart
   kubernetes.core.helm:
-    kubeconfig: /etc/kubernetes/admin.conf
     release_name: spark-operator
     chart_repo_url: "https://googlecloudplatform.github.io/spark-on-k8s-operator"
     create_namespace: yes
@@ -19,16 +19,19 @@
     values:
       sparkJobNamespace: spark-jobs
       webhook:
-        enable: true      
+        enable: true
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Get service account name
   kubernetes.core.k8s_info:
-    kubeconfig: /etc/kubernetes/admin.conf          
     kind: ServiceAccount
     label_selectors:
       - 'app.kubernetes.io/instance=spark-operator'
     namespace: spark-jobs
   register: serviceaccount
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name:
   set_fact:
@@ -37,16 +40,18 @@
 
 - name: Deploy latest version of sparkapplication chart inside spark-jobs namespace (and create it)
   kubernetes.core.helm:
-    kubeconfig: /etc/kubernetes/admin.conf      
     release_name: myspark
     chart_repo_url: "https://artifactory.vgt.vito.be/helm-charts"
     chart_ref: sparkapplication
     release_namespace: spark-jobs
     create_namespace: true
     values: "{{ lookup('template', 'sparkapplication_values.yaml') | from_yaml }}"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Deploy ingress
   kubernetes.core.k8s:
-    kubeconfig: /etc/kubernetes/admin.conf      
     state: present
-    definition: "{{ lookup('template', 'openeo-ingress.yaml') | from_yaml }}"    
+    definition: "{{ lookup('template', 'openeo-ingress.yaml') | from_yaml }}"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
