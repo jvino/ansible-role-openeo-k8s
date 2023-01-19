@@ -15,6 +15,7 @@
     chart_repo_url: "https://googlecloudplatform.github.io/spark-on-k8s-operator"
     create_namespace: yes
     chart_ref: spark-operator
+    chart_version: 2.4.5
     release_namespace: spark-operator
     values:
       sparkJobNamespace: spark-jobs
@@ -43,6 +44,7 @@
     release_name: myspark
     chart_repo_url: "https://artifactory.vgt.vito.be/helm-charts"
     chart_ref: sparkapplication
+    chart_version: 0.6.4
     release_namespace: spark-jobs
     create_namespace: true
     values: "{{ lookup('template', 'sparkapplication_values.yaml') | from_yaml }}"
