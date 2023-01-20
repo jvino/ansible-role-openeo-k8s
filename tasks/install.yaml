@@ -15,7 +15,7 @@
     chart_repo_url: "https://googlecloudplatform.github.io/spark-on-k8s-operator"
     create_namespace: yes
     chart_ref: spark-operator
-    chart_version: "2.4.5"
+    chart_version: "v1beta2-1.1.2-2.4.5"
     release_namespace: spark-operator
     values:
       sparkJobNamespace: spark-jobs
