@@ -46,6 +46,7 @@
     release_namespace: spark-jobs
     create_namespace: true
     values: "{{ lookup('template', 'sparkapplication_values.yaml') | from_yaml }}"
+    timeout: "10m0s"
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
