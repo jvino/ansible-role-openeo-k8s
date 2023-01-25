@@ -3,7 +3,7 @@ image: "vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube"
 imageVersion: "latest"
 jmxExporterJar: "/opt/jmx_prometheus_javaagent-0.13.0.jar"
 mainApplicationFile: "local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py"
-serviceAccount: "{{ openeo_spark_jobs_serviceaccount }}"
+serviceAccount: "openeo"
 volumes:
   - name: "eodata"
     hostPath:
