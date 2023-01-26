@@ -43,32 +43,43 @@
     dest: /tmp/cscale_layercatalog.json
     mode: '0440'
 
-- name: Create App configmap [shell]
-  command: kubectl create configmap layercatalog --from-file=/tmp/cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
-
 #kubectl create configmap layercatalog --from-file=cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
 
-#- name: Create App configmap
-#  kubernetes.core.k8s:
+#- name: Create App configmap [shell]
+#  command: kubectl create configmap layercatalog --from-file=/tmp/cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
+
+- name: slurp cscale_layercatalog.json
+  slurp:
+    src: "/tmp/cscale_layercatalog.json"
+  register: cscale_layercatalog
+
+- name: print cscale_layercatalog.json
+  debug: var=cscale_layercatalog
+
+- name: Create cscale_layercatalog configmap
+  kubernetes.core.k8s:
     #kubeconfig: /etc/kubernetes/admin.conf
-#    name: layercatalog
-#    namespace: spark-jobs
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#    src: "/tmp/cscale_layercatalog.json"
-#    state: present
-#    apply: yes
+    state: present
+    name: layercatalog
+    namespace: spark-jobs
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cscale_layercatalog-configmap
+      data:
+        cscale_layercatalog: "{{ cscale_layercatalog.content | from_json }}"
+    apply: yes
     #force: yes
     #server_side_apply:
     #  field_manager: ansible
   #ignore_errors: yes oppure true
-#  register: openeo_configmap
-#  environment:
-#    KUBECONFIG: /etc/kubernetes/admin.conf
-#
-#- name: print output configmap creation
-#  debug: var=openeo_configmap
+  register: openeo_configmap
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: print output configmap creation
+  debug: var=openeo_configmap
 
 - name: Deploy latest version of sparkapplication chart inside spark-jobs namespace (and create it)
   kubernetes.core.helm:
