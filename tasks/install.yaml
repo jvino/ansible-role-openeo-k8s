@@ -40,12 +40,12 @@
 - name: Download App ConfigMap json
   get_url:
     url: https://raw.githubusercontent.com/Open-EO/openeo-geotrellis-kubernetes/master/docker/cscale_layercatalog.json
-    dest: ./cscale_layercatalog.json
+    dest: /tmp/cscale_layercatalog.json
     mode: '0440'
 
 #kubectl create configmap layercatalog --from-file=cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
 
-- name: Create configmap using server side apply
+- name: Create App configmap
   kubernetes.core.k8s:
     #kubeconfig: /etc/kubernetes/admin.conf
     name: layercatalog
@@ -53,7 +53,7 @@
     definition:
       apiVersion: v1
       kind: ConfigMap
-    src: "{{ lookup('file', './cscale_layercatalog.json') | from_json }}"
+    src: "{{ lookup('file', '/tmp/cscale_layercatalog.json') | from_json }}"
     state: present
     apply: yes
     #force: yes
