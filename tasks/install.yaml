@@ -43,29 +43,32 @@
     dest: /tmp/cscale_layercatalog.json
     mode: '0440'
 
+- name: Create App configmap [shell]
+  command: kubectl create configmap layercatalog --from-file=/tmp/cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
+
 #kubectl create configmap layercatalog --from-file=cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
 
-- name: Create App configmap
-  kubernetes.core.k8s:
+#- name: Create App configmap
+#  kubernetes.core.k8s:
     #kubeconfig: /etc/kubernetes/admin.conf
-    name: layercatalog
-    namespace: spark-jobs
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-    src: "/tmp/cscale_layercatalog.json"
-    state: present
-    apply: yes
+#    name: layercatalog
+#    namespace: spark-jobs
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#    src: "/tmp/cscale_layercatalog.json"
+#    state: present
+#    apply: yes
     #force: yes
     #server_side_apply:
     #  field_manager: ansible
   #ignore_errors: yes oppure true
-  register: openeo_configmap
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-
-- name: print output configmap creation
-  debug: var=openeo_configmap
+#  register: openeo_configmap
+#  environment:
+#    KUBECONFIG: /etc/kubernetes/admin.conf
+#
+#- name: print output configmap creation
+#  debug: var=openeo_configmap
 
 - name: Deploy latest version of sparkapplication chart inside spark-jobs namespace (and create it)
   kubernetes.core.helm:
