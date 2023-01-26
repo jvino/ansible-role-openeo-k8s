@@ -62,13 +62,13 @@
     state: present
     name: layercatalog
     namespace: spark-jobs
-    definition:
+    definition: 
       apiVersion: v1
       kind: ConfigMap
       metadata:
         name: cscale_layercatalog-configmap
       data:
-        cscale_layercatalog: "{{ cscale_layercatalog.content | from_json }}"
+        cscale_layercatalog: "{{ cscale_layercatalog.content | b64decode }}"
     apply: yes
     #force: yes
     #server_side_apply:
