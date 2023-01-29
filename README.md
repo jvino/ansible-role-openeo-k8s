@@ -1,4 +1,4 @@
-Role Name
+ansible-role-openeo-k8s
 =========
 
 An ansible role that installs the OpenEO platform on top of a Kubernetes cluster using helm charts.
@@ -14,7 +14,7 @@ Available variables are listed below, along with default values (see `defaults/m
 License
 -------
 
-BSD
+Apache-2
 
 Author Information
 ------------------
