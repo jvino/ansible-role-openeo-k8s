@@ -14,8 +14,8 @@ volumes:
     configMap:
       name: layercatalog
       items:
-      - key: cscale_layercatalog.json
-        path: /tmp/cscale_layercatalog.json
+      - key: cscale_layercatalog
+        path: cscale_layercatalog.json
 volumeMounts:
   - name: "eodata"
     mountPath: "/eodata"
@@ -25,7 +25,7 @@ executor:
   memory: "512m"
   cpu: 1
   envVars:
-    OPENEO_CATALOG_FILES: "/opt/layercatalog.json"
+    OPENEO_CATALOG_FILES: "/etc/config/cscale_layercatalog.json"
     OPENEO_S1BACKSCATTER_ELEV_GEOID: "/opt/openeo-vito-aux-data/egm96.grd"
     OTB_HOME: "/opt/orfeo-toolbox"
     OTB_APPLICATION_PATH: "/opt/orfeo-toolbox/lib/otb/applications"
