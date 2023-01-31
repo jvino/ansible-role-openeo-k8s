@@ -10,9 +10,17 @@ volumes:
     hostPath:
       path: "/eodata"
       type: "DirectoryOrCreate"
+  - name: "layercatalog"
+    configMap:
+      name: layercatalog
+      items:
+      - key: cscale_layercatalog.json
+        path: /tmp/cscale_layercatalog.json
 volumeMounts:
   - name: "eodata"
     mountPath: "/eodata"
+  - name: "layercatalog"
+    mountPath: /etc/config
 executor:
   memory: "512m"
   cpu: 1
