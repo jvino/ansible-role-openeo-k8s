@@ -5,27 +5,27 @@ jmxExporterJar: "/opt/jmx_prometheus_javaagent-0.13.0.jar"
 mainApplicationFile: "local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py"
 rbac:
   serviceAccountDriver: "{{ openeo_spark_jobs_serviceaccount }}"
-volumes:
+  volumes:
   - name: "eodata"
     hostPath:
       path: "/eodata"
       type: "DirectoryOrCreate"
-  - name: "layercatalog"
-    configMap:
-      name: layercatalog
-      items:
-      - key: cscale_layercatalog
-        path: cscale_layercatalog.json
+  - name: "layercatalog"                #########
+    configMap:                          #########
+      name: layercatalog                #########
+      items:                            #########
+      - key: cscale_layercatalog.json   #########
+        path: layercatalog.json         #########
 volumeMounts:
   - name: "eodata"
     mountPath: "/eodata"
-  - name: "layercatalog"
-    mountPath: /etc/config
+  - name: "layercatalog"                #########
+    mountPath: /etc/config              #########
 executor:
   memory: "512m"
   cpu: 1
   envVars:
-    OPENEO_CATALOG_FILES: "/etc/config/cscale_layercatalog.json"
+    OPENEO_CATALOG_FILES: "/etc/config/layercatalog.json"
     OPENEO_S1BACKSCATTER_ELEV_GEOID: "/opt/openeo-vito-aux-data/egm96.grd"
     OTB_HOME: "/opt/orfeo-toolbox"
     OTB_APPLICATION_PATH: "/opt/orfeo-toolbox/lib/otb/applications"
@@ -40,7 +40,7 @@ driver:
     KUBE: "true"
     KUBE_OPENEO_API_PORT: "50001"
     DRIVER_IMPLEMENTATION_PACKAGE: "openeogeotrellis"
-    OPENEO_CATALOG_FILES: "/etc/config/cscale_layercatalog.json"
+    OPENEO_CATALOG_FILES: "/etc/config/layercatalog.json"
     OPENEO_S1BACKSCATTER_ELEV_GEOID: "/opt/openeo-vito-aux-data/egm96.grd"
     OTB_HOME: "/opt/orfeo-toolbox"
     OTB_APPLICATION_PATH: "/opt/orfeo-toolbox/lib/otb/applications"
@@ -57,7 +57,7 @@ jarDependencies:
   - 'local:///opt/geotrellis-extensions-2.3.0_2.12-SNAPSHOT.jar'
   - 'local:///opt/geotrellis-backend-assembly-0.4.6-openeo_2.12.jar'
 fileDependencies:
-  - 'local:///etc/config/cscale_layercatalog.json'
+  - 'local:///etc/config/layercatalog.json'
 service:
   enabled: true
   port: 50001
