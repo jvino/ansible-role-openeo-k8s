@@ -3,3 +3,4 @@
 
 openeo_cert_manager_issuer: letsencrypt-staging-issuer
 openeo_dns_name: openeoendpoint.com
+openeo_configmap_url: https://raw.githubusercontent.com/Open-EO/openeo-geotrellis-kubernetes/master/docker/cscale_layercatalog.json

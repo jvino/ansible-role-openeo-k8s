@@ -39,7 +39,7 @@
 
 - name: Download App ConfigMap json
   get_url:
-    url: https://raw.githubusercontent.com/Open-EO/openeo-geotrellis-kubernetes/master/docker/cscale_layercatalog.json
+    url: "{{ openeo_configmap_url }}"
     dest: /tmp/cscale_layercatalog.json
     mode: '0440'
 
