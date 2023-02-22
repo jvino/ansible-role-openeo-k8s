@@ -43,19 +43,16 @@
     dest: /tmp/cscale_layercatalog.json
     mode: '0440'
 
-#kubectl create configmap layercatalog --from-file=cscale_layercatalog.json --namespace=spark-jobs -o yaml --dry-run=client | kubectl apply -f -
-
 - name: slurp cscale_layercatalog.json
   slurp:
     src: "/tmp/cscale_layercatalog.json"
   register: cscale_layercatalog
 
-- name: print cscale_layercatalog.json
-  debug: var=cscale_layercatalog
+#- name: print cscale_layercatalog.json
+#  debug: var=cscale_layercatalog
 
 - name: Create cscale_layercatalog configmap
   kubernetes.core.k8s:
-    #kubeconfig: /etc/kubernetes/admin.conf
     state: present
     name: layercatalog
     namespace: spark-jobs
@@ -86,7 +83,7 @@
     release_namespace: spark-jobs
     create_namespace: true
     values: "{{ lookup('template', 'sparkapplication_values.yaml') | from_yaml }}"
-    timeout: "10m0s"
+    timeout: "20m0s"
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
