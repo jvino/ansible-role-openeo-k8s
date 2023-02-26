@@ -3,3 +3,8 @@
 
 openeo_cert_manager_issuer: letsencrypt-staging-issuer
 openeo_dns_name: openeoendpoint.com
+openeo_configmap_url: https://raw.githubusercontent.com/Open-EO/openeo-geotrellis-kubernetes/master/docker/cscale_layercatalog.json
+openeo_spark_driver_memory: 2g
+openeo_spark_driver_cpus: 1
+openeo_spark_executor_memory: 2g
+openeo_spark_executor_cpus: 1
