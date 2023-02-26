@@ -1,4 +1,16 @@
 ---
+- name: Deploy Zookeeper
+  kubernetes.core.helm:
+    release_name: zookeeper
+    chart_repo_url: "https://charts.bitnami.com/bitnami"
+    create_namespace: yes
+    chart_ref: zookeeper
+    release_namespace: default
+    values:
+      persistence:
+        enabled: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Create spark-jobs namespace
   kubernetes.core.k8s:
@@ -37,6 +49,43 @@
   set_fact:
     openeo_spark_jobs_serviceaccount: "{{ serviceaccount.resources[0].metadata.name }}"      
 
+- name: Download App ConfigMap json
+  get_url:
+    url: "{{ openeo_configmap_url }}"
+    dest: /tmp/cscale_layercatalog.json
+    mode: '0440'
+
+- name: slurp cscale_layercatalog.json
+  slurp:
+    src: "/tmp/cscale_layercatalog.json"
+  register: cscale_layercatalog
+
+#- name: print cscale_layercatalog.json
+#  debug: var=cscale_layercatalog
+
+- name: Create cscale_layercatalog configmap
+  kubernetes.core.k8s:
+    state: present
+    name: layercatalog
+    namespace: spark-jobs
+    definition: 
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: layercatalog
+      data:
+        cscale_layercatalog: "{{ cscale_layercatalog.content | b64decode }}"
+    apply: yes
+    #force: yes
+    #server_side_apply:
+    #  field_manager: ansible
+  #ignore_errors: yes oppure true
+  register: openeo_configmap
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+#- name: print output configmap creation
+#  debug: var=openeo_configmap
 
 - name: Deploy latest version of sparkapplication chart inside spark-jobs namespace (and create it)
   kubernetes.core.helm:
@@ -46,6 +95,7 @@
     release_namespace: spark-jobs
     create_namespace: true
     values: "{{ lookup('template', 'sparkapplication_values.yaml') | from_yaml }}"
+    timeout: "20m0s"
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
