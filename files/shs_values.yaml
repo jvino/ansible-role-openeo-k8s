@@ -1,0 +1,5 @@
+envVars:
+  SPARK_NO_DAEMONIZE: "false"
+  SPARK_HISTORY_OPTS: '-Dspark.eventLog.dir=s3a://spark-history/history_prod -Dspark.history.fs.logDirectory=s3a://spark-history/history_prod -Dspark.hadoop.fs.s3a.endpoint=S3_ENDPOINT -Dspark.hadoop.fs.s3a.path.style.access=true -Dspark.hadoop.fs.s3a.aws.credentials.provider=com.amazonaws.auth.EnvironmentVariableCredentialsProvider'
+  AWS_ACCESS_KEY_ID: "AWS_ACCESS_KEY_ID"
+  AWS_SECRET_ACCESS_KEY: "AWS_SECRET_ACCESS_KEY"

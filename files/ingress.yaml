@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: openeo-ingress
+  namespace: spark-jobs
+  annotations:
+    kubernetes.io/ingress.class: nginx
+
+spec:
+  tls:
+  - hosts: 
+      - gvino.test.fedcloud.eu
+    secretName: openeocert
+  rules:
+    - host: gvino.test.fedcloud.eu
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name:  myspark-sparkapplication
+                port:
+                  number: 50001
+

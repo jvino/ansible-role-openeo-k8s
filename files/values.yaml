@@ -1,0 +1,112 @@
+---
+image: "vito-docker.artifactory.vgt.vito.be/openeo-geotrellis-kube"
+imageVersion: "latest"
+imagePullPolicy: Always
+jmxExporterJar: "/opt/jmx_prometheus_javaagent-0.13.0.jar"
+mainApplicationFile: "local:///opt/openeo/lib64/python3.8/site-packages/openeogeotrellis/deploy/kube.py"
+serviceAccount: "openeo"
+volumes:
+  - name: "eodata"
+    hostPath:
+      path: "/mnt/s3data"
+      type: "DirectoryOrCreate"
+  - name: "incdcatalog"
+    configMap:
+      name: incdcatalog
+  - name: "sparkapplicationyaml"
+    configMap:
+      name: sparkapplicationyaml
+volumeMounts:
+  - name: "eodata"
+    mountPath: "/eodata"
+  - name: "incdcatalog"
+    mountPath: "/opt/layercatalog.json"
+    subPath: "layercatalog.json"
+  - name: "sparkapplicationyaml"
+    mountPath: "/opt/venv/lib64/python3.8/site-packages/openeogeotrellis/deploy/sparkapplication.yaml.j2"
+    subPath: "sparkapplication.yaml.j2"
+executor:
+  memory: "4096m"
+  cores: 2
+  coreRequest: 800m
+  memoryOverhead: "2048m"
+  envVars:
+    SPARK_USER: "spark"
+    OPENEO_CATALOG_FILES: "/opt/layercatalog.json"
+    OPENEO_S1BACKSCATTER_ELEV_GEOID: "/opt/openeo-vito-aux-data/egm96.grd"
+    OTB_HOME: "/opt/orfeo-toolbox"
+    OTB_APPLICATION_PATH: "/opt/orfeo-toolbox/lib/otb/applications"
+    KUBE: "true"
+    GDAL_NUM_THREADS: "2"
+    GDAL_CACHEMAX: "500"
+    GDAL_DISABLE_READDIR_ON_OPEN: "EMPTY_DIR"
+    GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: "YES"
+    PYTHONPATH: "$PYTHONPATH:/opt/openeo/lib/python3.8/site-packages/"
+    PYTHON_MAX_MEMORY: "3657433088"
+    ZOOKEEPERNODES: "zookeeper-cscale.zookeeper.svc.cluster.local:2181"
+    SWIFT_URL: "SWIFT_URL"
+    SWIFT_BUCKET: "SWIFT_BUCKET"
+    AWS_HTTPS: "YES"
+    AWS_S3_ENDPOINT: "AWS_S3_ENDPOINT"
+    AWS_DEFAULT_REGION: "AWS_DEFAULT_REGION"
+    AWS_REGION: "AWS_REGION"
+    AWS_ACCESS_KEY_ID: "AWS_ACCESS_KEY_ID"
+    AWS_SECRET_ACCESS_KEY: "AWS_SECRET_ACCESS_KEY"
+    AWS_VIRTUAL_HOSTING: "FALSE"
+    VSI_CACHE: "TRUE"
+    CPL_DEBUG: "ON"
+  javaOptions: "-Dlog4j.configuration=/opt/log4j.properties -Dscala.concurrent.context.numThreads=4 -Dscala.concurrent.context.maxThreads=4"
+driver:
+  memory: "4096m"
+  cores: 2
+  envVars:
+    SPARK_USER: "spark"
+    KUBE: "true"
+    KUBE_OPENEO_API_PORT: "50001"
+    DRIVER_IMPLEMENTATION_PACKAGE: "openeogeotrellis"
+    OPENEO_CATALOG_FILES: "/opt/layercatalog.json"
+    OPENEO_S1BACKSCATTER_ELEV_GEOID: "/opt/openeo-vito-aux-data/egm96.grd"
+    OTB_HOME: "/opt/orfeo-toolbox"
+    OTB_APPLICATION_PATH: "/opt/orfeo-toolbox/lib/otb/applications"
+    PYTHONPATH: "$PYTHONPATH:/opt/openeo/lib/python3.8/site-packages/"
+    ZOOKEEPERNODES: "zookeeper-cscale.zookeeper.svc.cluster.local:2181"
+    GDAL_NUM_THREADS: "2"
+    GDAL_CACHEMAX: "500"
+    GDAL_DISABLE_READDIR_ON_OPEN: "EMPTY_DIR"
+    GDAL_HTTP_MERGE_CONSECUTIVE_RANGES: "YES"
+    SWIFT_URL: "SWIFT_URL"
+    SWIFT_BUCKET: "SWIFT_BUCKET"
+    AWS_HTTPS: "YES"
+    AWS_S3_ENDPOINT: "AWS_S3_ENDPOINT"
+    AWS_DEFAULT_REGION: "AWS_DEFAULT_REGION"
+    AWS_REGION: "AWS_REGION"
+    AWS_ACCESS_KEY_ID: "AWS_ACCESS_KEY_ID"
+    AWS_SECRET_ACCESS_KEY: "AWS_SECRET_ACCESS_KEY"
+    AWS_VIRTUAL_HOSTING: "FALSE"
+    VSI_CACHE: "TRUE"
+    SIGNED_URL_SECRET: ""
+  javaOptions: "-Dlog4j.configuration=/opt/log4j.properties -Dscala.concurrent.context.numThreads=6 -Dpixels.treshold=1000000"
+sparkConf:
+  "spark.executorEnv.DRIVER_IMPLEMENTATION_PACKAGE": "openeogeotrellis"
+  "spark.extraListeners": "org.openeo.sparklisteners.CancelRunawayJobListener"
+  "spark.appMasterEnv.DRIVER_IMPLEMENTATION_PACKAGE": "openeogeotrellis"
+  "spark.executorEnv.GDAL_NUM_THREADS": "2"
+  "spark.executorEnv.GDAL_DISABLE_READDIR_ON_OPEN": "EMPTY_DIR"
+jarDependencies:
+  - 'local:///opt/geotrellis-extensions-static.jar'
+  - 'local:///opt/geotrellis-backend-assembly-static.jar'
+  - 'local:///opt/openeo-logging-static.jar'
+fileDependencies:
+  - 'local:///opt/layercatalog.json'
+service:
+  enabled: true
+  port: 50001
+rbac:
+  create: true
+  serviceAccountName: openeo
+monitoring:
+  exposeDriverMetrics: true
+  exposeExecutorMetrics: true
+  prometheus:
+    jmxExporterJar: "/opt/jmx_prometheus_javaagent-0.13.0.jar"
+    port: 8090

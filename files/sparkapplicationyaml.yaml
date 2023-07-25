@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sparkapplicationyaml
+  namespace: spark-jobs
+data:
+  sparkapplication.yaml.j2: |-
+    {% extends "sparkapplication_template.yaml.j2" %}
+    {% block volumes %}
+        {{ super() }}
+        - name: "incdcatalog"
+          configMap:
+            name: "incdcatalog"
+    {% endblock %}
+    {% block driver_volumeMounts %}
+          {{ super() }}
+          - name: "incdcatalog"
+            mountPath: "/opt/layercatalog.json"
+            subPath: "layercatalog.json"
+    {% endblock %}
