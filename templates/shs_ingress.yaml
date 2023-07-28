@@ -13,10 +13,10 @@ metadata:
 spec:
   tls:
   - hosts: 
-      - gvino.test.fedcloud.eu
+      - "{{ openeo_dns_name }}"
     secretName: openeocert
   rules:
-    - host: gvino.test.fedcloud.eu
+    - host: "{{ openeo_dns_name }}"
       http:
         paths:
           - path: /hist(/|$)(.*)

@@ -8,3 +8,7 @@ openeo_spark_driver_memory: 2g
 openeo_spark_driver_cpus: 1
 openeo_spark_executor_memory: 2g
 openeo_spark_executor_cpus: 1
+
+# Spark Application
+openeo_spark_application_version: 0.7.2
+openeo_spark_history_application_version: 0.0.1
