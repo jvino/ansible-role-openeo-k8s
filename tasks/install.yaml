@@ -4,7 +4,14 @@
     path: /etc/openeo
     state: directory
     mode: '0755'
-    
+
+- name: Enable AllowSnippetAnnotations option
+  command: "helm upgrade --install --cleanup-on-fail --wait --timeout 10m0s ingress-nginx ingress-nginx/ingress-nginx \
+            --set controller.allowSnippetAnnotations=true -n ingress-nginx --create-namespace --version 4.5.2 \
+            --values /etc/nginx-ingress-values.yml"
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
 - name: Create spark-jobs namespace
   kubernetes.core.k8s:
     name: spark-jobs
@@ -118,8 +125,8 @@
 - name: Load Spark History Ingress
   block:
   - template:
-      src: template/shs_ingress.yaml
-      dest: /etc/openeo/shs_ingress.yml
-  - command: kubectl apply -f /etc/openeo/shs_ingress.yml -n spark-history
+      src: templates/shs_ingress.yaml
+      dest: /etc/openeo/shs_ingress.yaml
+  - command: kubectl apply -f /etc/openeo/shs_ingress.yaml -n spark-history
     environment:
       KUBECONFIG: /etc/kubernetes/admin.conf
