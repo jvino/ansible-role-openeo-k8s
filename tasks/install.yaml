@@ -43,6 +43,15 @@
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
+- name: Create and import certificate in Kubernetes
+  command: "{{ item }}"
+  with_items:
+    - openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/openeo/tls.key -out /etc/openeo/tls.crt -subj "/CN=gvino.test.fedcloud.eu"
+    - kubectl -n spark-jobs create secret tls openeocert --cert=/etc/openeo/tls.crt --key=/etc/openeo/tls.key
+    - kubectl -n spark-history create secret tls openeocert --cert=/etc/openeo/tls.crt --key=/etc/openeo/tls.key
+  environment:
+      KUBECONFIG: /etc/kubernetes/admin.conf
+      
 - name: Deploy latest version of spark-operator chart
   kubernetes.core.helm:
     release_name: spark-operator
