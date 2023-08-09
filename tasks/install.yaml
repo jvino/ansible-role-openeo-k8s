@@ -1,4 +1,17 @@
 ---
+- name: Deploy Zookeeper
+  kubernetes.core.helm:
+    release_name: zookeeper
+    chart_repo_url: "https://charts.bitnami.com/bitnami"
+    create_namespace: yes
+    chart_ref: zookeeper
+    release_namespace: default
+    values:
+      persistence:
+        enabled: false
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
 - name: Create the openeo directory if it does not exist
   file:
     path: /etc/openeo
