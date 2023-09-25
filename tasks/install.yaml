@@ -2,7 +2,7 @@
 - name: Deploy Zookeeper
   kubernetes.core.helm:
     release_name: zookeeper
-    chart_repo_url: "https://charts.bitnami.com/bitnami"
+    chart_repo_url: "oci://registry-1.docker.io/bitnamicharts/zookeeper"
     create_namespace: yes
     chart_ref: zookeeper
     release_namespace: default
